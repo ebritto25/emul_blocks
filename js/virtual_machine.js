@@ -57,7 +57,7 @@ class Memory {
 
 	getValueOfVariable(name) {
 		let mem_address = this.getAddressFromSymbolTable(name);
-		return getValueFromMemoryAddress(mem_address);
+		return this.getValueFromMemoryAddress(mem_address);
 	}
 
 }
@@ -81,7 +81,7 @@ class Processor {
 	}
 
 	checkIfRegisterIsValid(register) {
-		if(!registers.has(register)){
+		if(!this.registers.has(register)){
 			throw "Invalid Register";
 		}
 	}
@@ -100,23 +100,52 @@ class Processor {
 
 	getRegisterValue(register) {
 		this.checkIfRegisterIsValid(register);
-		let register_address = registers.get(register);
-		return memory.getValueFromMemoryAddress(register_address);
+		let register_address = this.registers.get(register);
+		return this.memory.getValueFromMemoryAddress(register_address);
 	}
 
 	setRegisterValue(value,register) {
 		this.checkIfRegisterIsValid(register);
-		let register_address = registers.get(register);
-		return memory.putDataIntoMemoryAddress(value,register_address);
+		let register_address = this.registers.get(register);
+		return this.memory.putDataIntoMemoryAddress(value,register_address);
 	}
 
 	addTwoNumbers() {
-		let n1 = getRegisterValue("REG_AAA");
-		let n2 = getRegisterValue("REG_AAB");
+		let n1 = this.getRegisterValue("REG_AAA");
+		let n2 = this.getRegisterValue("REG_AAB");
 
 		let result = n1 + n2;
 
-		return setRegisterValue(result,"REG_AAC");
+		return this.setRegisterValue(result,"REG_AAC");
+	}
+
+	subTwoNumbers() {
+		let n1 = this.getRegisterValue("REG_AAA");
+		let n2 = this.getRegisterValue("REG_AAB");
+
+		let result = n1 - n2;
+
+		return this.setRegisterValue(result,"REG_AAC");
+	}
+
+	multTwoNumbers() {
+		let n1 = this.getRegisterValue("REG_AAA");
+		let n2 = this.getRegisterValue("REG_AAB");
+
+		let result = n1 * n2;
+
+		return this.setRegisterValue(result,"REG_AAC");
+	}
+
+	divTwoNumbers() {
+		let n1 = this.getRegisterValue("REG_AAA");
+		let n2 = this.getRegisterValue("REG_AAB");
+
+		if (n2 === 0){ throw "Division by Zero!" }
+
+		let result = n1 / n2;
+
+		return this.setRegisterValue(result,"REG_AAC");
 	}
 
 }
