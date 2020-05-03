@@ -1,8 +1,8 @@
 class Memory {
 	constructor() {
-		this.instuction_memory = Array();
-		this.data_memory = Array();
-		this.symbol_table = Map();
+		this.instuction_memory = new Array();
+		this.data_memory = new Array();
+		this.symbol_table = new Map();
 		this.instruction_pointer = 0;
 	}
 
@@ -58,6 +58,19 @@ class Memory {
 	getValueOfVariable(name) {
 		let mem_address = this.getAddressFromSymbolTable(name);
 		return this.getValueFromMemoryAddress(mem_address);
+	}
+	
+	// Memória de instruções
+	getInstructionPointerPosition() {
+		return this.instruction_pointer;
+	}
+
+	runInstructionAt(current_instruction_pointer_position) {
+		return this.instruction_memory[current_instruction_pointer_position]();
+	}
+
+	incrementInstructionPointer(jump_n_instructions = null) {
+		this.instruction_pointer += jump_n_instructions || 1;
 	}
 
 }
@@ -148,4 +161,22 @@ class Processor {
 		return this.setRegisterValue(result,"REG_AAC");
 	}
 
+	runNextInstruction() {
+		let mem = this.memory; 
+		let current_instruction_pointer_position = mem.getInstructionPointerPosition();
+
+		mem.runInstructionAt(current_instruction_pointer_position);
+		mem.incrementInstructionPointer();
+
+		return true;
+	}
+}
+
+export class VirtualMachine {
+	constructor() {
+		this.processor = Processor();
+	}
+	tick() {
+		this.processor.runNextInstruction();
+	}
 }
