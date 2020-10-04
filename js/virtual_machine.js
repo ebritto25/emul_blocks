@@ -1,6 +1,6 @@
-class Memory {
+export class Memory {
 	constructor() {
-		this.instuction_memory = new Array();
+		this.instruction_memory = new Array();
 		this.data_memory = new Array();
 		this.symbol_table = new Map();
 		this.instruction_pointer = 0;
@@ -48,7 +48,7 @@ class Memory {
 	getValueFromMemoryAddress(address) {
 		let memory = this.data_memory;
 
-		if (address > memory.lenght || address < 0) {
+		if (address > memory.length || address < 0) {
 			throw "Trying to access a Out-Of-Bounds address";
 		}
 
@@ -75,9 +75,21 @@ class Memory {
 
 }
 
-class Processor {
-	constructor(){
-		this.memory = Memory();
+export class Processor {
+	constructor(memory = null,aditional_inst = null){
+		let inst_set = new Map([
+			['ADD',this.addTwoNumbers],
+			['DIV',this.divTwoNumbers],
+			['MUL',this.mulTwoNumbers],
+			['SUB',this.subTwoNumbers],
+		]);
+
+		if (aditional_inst != null) { 
+			inst_set = new Map([...inst_set,...aditional_inst]);
+		}
+
+		this.instruction_set = inst_set;
+		this.memory = memory || Memory();
 		this.registers = this.initRegisters();
 	}
 
@@ -141,7 +153,7 @@ class Processor {
 		return this.setRegisterValue(result,"REG_AAC");
 	}
 
-	multTwoNumbers() {
+	mulTwoNumbers() {
 		let n1 = this.getRegisterValue("REG_AAA");
 		let n2 = this.getRegisterValue("REG_AAB");
 
@@ -173,8 +185,10 @@ class Processor {
 }
 
 export class VirtualMachine {
-	constructor() {
-		this.processor = Processor();
+	constructor(processor = null,memory = null) {
+		let mem  = memory || Memory();
+		let proc = processor || Processor(mem);
+		this.processor = proc;
 	}
 	tick() {
 		this.processor.runNextInstruction();
