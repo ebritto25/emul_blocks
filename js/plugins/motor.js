@@ -1,4 +1,6 @@
-export class Motor extends BasePlugin{
+BasePlugin = new require("./base_plugin.js");
+
+module.exports = class Motor extends BasePlugin{
 	
 	/* @REMOVE
 	 * TODOs:
@@ -18,6 +20,8 @@ export class Motor extends BasePlugin{
 			MOVE_DEGREES: 'mov_deg',
 			MOVE_ROTATION: 'mov_rot'
 		};
+
+		this.init();
 
 	}
 
@@ -41,12 +45,13 @@ export class Motor extends BasePlugin{
 	// 	ok: 
 	//	  true  -> sucess
 	//        false -> some shit happend
-	run_instruction( instruction_key /* string */ , parameters /* json */ ) { 
 
-		let instruction_ =  this.set_of_instructions.get( instruction_key );
+	/*
+	run_instruction( instruction_key , parameters  ) { 
 
+		let instruction_ =  this.set_of_instructions.get( instruction_key ); 
 		// Verify if the instruction was created
-		if( instruction_ === "undefined" /* WTF js... */ )
+		if( instruction_ == null  )
 			return "Instruction doesn't exist!", false; 
 
 		//Run the instruction...
@@ -55,6 +60,7 @@ export class Motor extends BasePlugin{
 		// We dont need to treat the error here, let the guy above treat it
 		return message, ok;
 	} 
+*/
 
 	// Instruction function: run the instructions to make the motor move a "X" seconds
 	// Params: TODO: There are more parameters that needs to be here

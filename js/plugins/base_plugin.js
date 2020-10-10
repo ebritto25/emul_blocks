@@ -1,6 +1,6 @@
 // Base class for a plugin
 // every plugin must inherit from this class
-export class BasePlugin{
+module.exports = class BasePlugin{
 
 	constructor() {
 		this.set_of_instructions = new Map(); // Map to instructions( functions )
@@ -18,7 +18,17 @@ export class BasePlugin{
 	// 	instruction_key: the name of the instruction to be executed
 	// 	parameters: the paramaters that will be passed to the function
 	run_instruction( instruction_key, parameters ) { 
-		console.log("Plugin Base Class run_instruction: You should Override this function!");
+
+		let instruction_ =  this.set_of_instructions.get( instruction_key ); 
+		// Verify if the instruction was created
+		if( instruction_ == null  )
+			return "Instruction doesn't exist!", false; 
+
+		//Run the instruction...
+		let message, ok = instruction_(pararmeters);
+
+		// We dont need to treat the error here, let the guy above treat it
+		return message, ok;
 	} 
 
 	// check if the plugin was correctly initialized
