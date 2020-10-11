@@ -21,6 +21,9 @@ module.exports = class Motor extends BasePlugin{
 			MOVE_ROTATION: 'mov_rot'
 		};
 
+		this.current_degree = 0;
+		this.max_degrees = 1000;
+
 		this.init();
 
 	}
@@ -30,9 +33,9 @@ module.exports = class Motor extends BasePlugin{
 	init() {
 		console.log("DEBUG: Initializing a motor plugin!");
 
-		this.set_of_instructions.set(instructions.MOVE_SECONDS,this.move_seconds);
-		this.set_of_instructions.set(instructions.MOVE_DEGREES,this.move_degrees);
-		this.set_of_instructions.set(instructions.MOVE_ROTATION,this.move_rotation);
+		this.set_of_instructions.set(this.instructions.MOVE_SECONDS,this.move_seconds.bind(this));
+		this.set_of_instructions.set(this.instructions.MOVE_DEGREES,this.move_degrees);
+		this.set_of_instructions.set(this.instructions.MOVE_ROTATION,this.move_rotation);
 	} 
 
 	// virtual: run a specific instruction 
@@ -71,6 +74,14 @@ module.exports = class Motor extends BasePlugin{
 	//	  true  -> sucess
 	//        false -> some shit happend
 	move_seconds( parameters /* json */ ) {
+		this.current_degree += 1;
+		if ( this.current_degree == this.max_degrees * parameters.seconds ) {
+			this.current_degree = 0;
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	// Instruction function: run the instructions to make the motor move a "X" seconds
