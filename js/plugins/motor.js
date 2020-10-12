@@ -29,41 +29,16 @@ module.exports = class Motor extends BasePlugin{
 	}
 
 	// virtual: inits the motor 
-	// @OVERRIDE
 	init() {
 		console.log("DEBUG: Initializing a motor plugin!");
 
-		this.set_of_instructions.set(this.instructions.MOVE_SECONDS,this.move_seconds.bind(this));
-		this.set_of_instructions.set(this.instructions.MOVE_DEGREES,this.move_degrees);
-		this.set_of_instructions.set(this.instructions.MOVE_ROTATION,this.move_rotation);
+		// Correlates intruction code to instruction function. Arrow functions have to be used
+		// to get the right 'this' for the functions
+		
+		this.set_of_instructions.set(this.instructions.MOVE_SECONDS,(param) => this.move_seconds(param));
+		this.set_of_instructions.set(this.instructions.MOVE_DEGREES,(param) => this.move_degrees(param));
+		this.set_of_instructions.set(this.instructions.MOVE_ROTATION,(param) => this.move_rotations(param));
 	} 
-
-	// virtual: run a specific instruction 
-	// @OVERRIDE
-	// Params:
-	// 	instruction_key: the name of the instruction to be executed
-	// 	parameters: the paramaters that will be passed to the function
-	// Return: ( errMsg, ok ) 
-	// 	errMsg: Information about error can be NULL  
-	// 	ok: 
-	//	  true  -> sucess
-	//        false -> some shit happend
-
-	/*
-	run_instruction( instruction_key , parameters  ) { 
-
-		let instruction_ =  this.set_of_instructions.get( instruction_key ); 
-		// Verify if the instruction was created
-		if( instruction_ == null  )
-			return "Instruction doesn't exist!", false; 
-
-		//Run the instruction...
-		let message, ok = instruction_(pararmeters);
-
-		// We dont need to treat the error here, let the guy above treat it
-		return message, ok;
-	} 
-*/
 
 	// Instruction function: run the instructions to make the motor move a "X" seconds
 	// Params: TODO: There are more parameters that needs to be here
@@ -74,8 +49,10 @@ module.exports = class Motor extends BasePlugin{
 	//	  true  -> sucess
 	//        false -> some shit happend
 	move_seconds( parameters /* json */ ) {
-		this.current_degree += 1;
-		if ( this.current_degree == this.max_degrees * parameters.seconds ) {
+		this.current_degree += parameters.clockwise ? 1 : -1 ;
+		if ( parameters.clockwise && this.current_degree >= this.max_degrees * parameters.seconds || 
+				 !parameters.clockwise && this.current_degree <= -(this.max_degrees * parameters.seconds)
+		) {
 			this.current_degree = 0;
 			return true;
 		}

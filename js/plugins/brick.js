@@ -19,7 +19,8 @@ module.exports = class Brick extends BasePlugin {
 
 		this.parsed_instructions = parsed_instructions;
 		this.instructions = {TICK: 'tick'};
-		this.set_of_instructions.set(this.instructions.TICK,this.tick.bind(this));
+		//this.set_of_instructions.set(this.instructions.TICK,this.tick.bind(this));
+		this.set_of_instructions.set(this.instructions.TICK,() => this.tick());
 		this.current_instruction = null;
 		this.init();
 	}
@@ -36,19 +37,27 @@ module.exports = class Brick extends BasePlugin {
 		return plugin;
 	}
 
+	has_more_instructions() {
+		return this.parsed_instructions.length > 0;
+	}
+
+	is_running_instruction() {
+		return this.current_instruction != null;
+	}
+
 	tick() {
-		if (this.current_instruction == null) {
+		if ( !this.is_running_instruction() && this.has_more_instructions()) {
 			let instruction_ = this.parsed_instructions.shift();
 			let plugin = this.get_plugin_at_port(instruction_.port);
-			this.current_instruction = function() {return instruction_.run(plugin)};
+			this.current_instruction = () => instruction_.run(plugin);
 			this.current_instruction();
 		}
-		else {
+		else if ( this.is_running_instruction() ){
 			if( this.current_instruction() ) {
 				this.current_instruction = null;
 			}
 		}
-		return this.current_instruction != null;
+		return this.is_running_instruction() || this.has_more_instructions();
 	}
 
 }

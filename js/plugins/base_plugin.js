@@ -22,8 +22,7 @@ module.exports = class BasePlugin{
 		let instruction_ =  this.set_of_instructions.get( instruction_key ); 
 		// Verify if the instruction was created
 		if( instruction_ == null  ){
-			throw 'ruim';
-			return "Instruction doesn't exist!", false; 
+			throw "Instruction doesn't exist!"; 
 		}
 
 		//Run the instruction...
